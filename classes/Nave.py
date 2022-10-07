@@ -1,3 +1,4 @@
+from random import randint
 import pygame
 from classes.Shoot import Shoot
 
@@ -11,15 +12,19 @@ class Nave(pygame.sprite.Sprite):
         self.tamanho_barra_vida = 400
         self.vida_ratio = (self.tamanho_barra_vida/self.vida_maxima)
         self.rect = self.image.get_rect(center = (tela_largura/2,tela_altura/2))
-    
+        #poder
+        self.bullet_damage = 20
+        self.bullet_speed = 40
+        self.particles = []
+
     def fire(self):
-        return Shoot(self.rect.center[0],self.rect.center[1])
+        return Shoot(self.rect.center[0],self.rect.center[1],self.bullet_damage,self.bullet_speed)
     
-    # def get_damage(self,quantidade):
-    #     if(self.vida_atual >= quantidade):
-    #         self.vida_atual -= quantidade
-    #     else:
-    #         self.kill()
+    def get_damage(self,quantidade):
+        if(self.vida_atual >= quantidade):
+            self.vida_atual -= quantidade
+        else:
+            self.kill()
 
     def barra_vida(self,game_surface,tela_largura):
         pygame.draw.rect(game_surface, (255,0,0), ((tela_largura/2)-300,10,self.vida_atual,10))
