@@ -59,7 +59,7 @@ while jogando:
         inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
         for inimigo in inimigo_hit:
             inimigo.life -= shoot.dano
-            shoot.on_collide()
+            inimigo.explode()
     
     game.fill((70,70,70))
     inimigo_spawn.inimigo_group.draw(game)

@@ -31,7 +31,7 @@ class Shoot(pygame.sprite.Sprite):
                 self.particles.remove(particle)
 
     def on_collide(self):
-        # self.drawExplosion()
+        self.drawExplosion()
         self.kill()
 
     def drawExplosion(self):
