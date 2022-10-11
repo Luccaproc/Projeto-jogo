@@ -1,12 +1,14 @@
 #definição do caminho (root)
 import sys
 import os
+
+from classes.explosao import Explosao
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path)
 
 import pygame 
-from pygame.locals import *
 
+from pygame.locals import *
 from random import randint
 
 #Classes / Game objects
@@ -31,9 +33,12 @@ pygame.display.set_caption('Nave teste')
 
 #Obejetos do jogo
 nave = Nave(tela_largura,tela_altura) 
+explosao = Explosao()
 
 inimigo_spawn = InimigoSpaw()
 display_group = pygame.sprite.Group()
+
+explode_group = pygame.sprite.Group()
 
 nave_group = pygame.sprite.Group()
 nave_group.add(nave)
@@ -59,17 +64,23 @@ while jogando:
         inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
         for inimigo in inimigo_hit:
             inimigo.life -= shoot.dano
-            inimigo.explode()
+            explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
+            explode_group.add()
+            shoot.kill()
     
     game.fill((70,70,70))
+    
     inimigo_spawn.inimigo_group.draw(game)
     fire_group.draw(game)
     nave_group.draw(game)
-    inimigo_spawn.update(tela_largura,tela_altura)
+
+
+    explosao.update()
+
     fire_group.update()
+    inimigo_spawn.update(tela_largura,tela_altura)
     nave_group.update(game,tela_largura,tela_altura,vel,width,height)
 
     pygame.display.flip()
     relogio.tick(fps)
-    timeDelta += 1
 pygame.quit()
