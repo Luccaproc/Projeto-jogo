@@ -64,8 +64,8 @@ while jogando:
         inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
         for inimigo in inimigo_hit:
             inimigo.life -= shoot.dano
-            explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
-            explode_group.add()
+            if(inimigo.life <= 0):
+                explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
             shoot.kill()
     
     game.fill((70,70,70))

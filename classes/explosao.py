@@ -15,7 +15,7 @@ class Explosao(pygame.sprite.Sprite):
             self.delete_particles()
             seconds = (pygame.time.get_ticks() - self.start_time)//1000
             # if(seconds < 2):
-                # self.particles.append([[self.rect.x,self.rect.y],[randint(-20,20)/10,-2],randint(4,30)])
+            #     self.particles.append([[self.rect.x,self.rect.y],[randint(-20,20)/10,-2],randint(4,30)])
             for particle in self.particles:
                 particle[0][0] += particle[2][0]
                 particle[0][1] += particle[2][1]
