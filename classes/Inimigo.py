@@ -1,9 +1,13 @@
 import math
+import os
 from random import randint
 import pygame
 
+from classes.Heal import Heal
 from classes.explosao import Explosao
 from classes.Shoot import Shoot
+
+IMG_HEAL = pygame.image.load(os.path.join("assets","buffs","heal.png"))
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self,pos_x,pos_y):
         super().__init__()
@@ -18,6 +22,11 @@ class Inimigo(pygame.sprite.Sprite):
         self.metade = False
         self.vel_y = 0
         self.particles = []
+
+    def emit_buff(self):
+        # random_numb = randint(0,20)
+        # if random_numb > 15 :
+        return Heal(self.rect.center[0],self.rect.center[1])
 
     def on_colide_bullet(self,dano):
         self.life -= Shoot.dano

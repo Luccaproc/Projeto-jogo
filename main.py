@@ -12,6 +12,7 @@ from pygame.locals import *
 from random import randint
 
 #Classes / Game objects
+from classes.Heal import Heal
 from classes.Inimigo import Inimigo
 from classes.InimigoSpaw import InimigoSpaw
 from classes.Nave import Nave
@@ -42,7 +43,9 @@ explode_group = pygame.sprite.Group()
 
 nave_group = pygame.sprite.Group()
 nave_group.add(nave)
+
 fire_group = pygame.sprite.Group()
+buff_group = pygame.sprite.Group()
 
 relogio = pygame.time.Clock()
 particles = []
@@ -65,19 +68,27 @@ while jogando:
         for inimigo in inimigo_hit:
             inimigo.life -= shoot.dano
             if(inimigo.life <= 0):
+                buff_group.add(inimigo.emit_buff())
                 explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
             shoot.kill()
+    
+    for buff in buff_group:
+        get_buff = pygame.sprite.spritecollide(buff,nave_group,False)
+        for nave in get_buff:
+            if(nave.vida_atual < nave.vida_maxima):
+                nave.vida_atual += buff.cura
+                buff.collide()
     
     game.fill((70,70,70))
     
     inimigo_spawn.inimigo_group.draw(game)
     fire_group.draw(game)
     nave_group.draw(game)
-
+    buff_group.draw(game)
 
     explosao.update()
-
     fire_group.update()
+    buff_group.update()
     inimigo_spawn.update(tela_largura,tela_altura)
     nave_group.update(game,tela_largura,tela_altura,vel,width,height)
 

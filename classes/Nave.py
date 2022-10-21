@@ -41,7 +41,7 @@ class Nave(pygame.sprite.Sprite):
             self.kill()
 
     def barra_vida(self,game_surface,tela_largura):
-        pygame.draw.rect(game_surface, (255,0,0), ((tela_largura/2)-300,10,self.vida_atual,10))
+        pygame.draw.rect(game_surface, (255,0,0), ((tela_largura/2)-300,10,(self.vida_atual*self.vida_ratio),10))
         pygame.draw.rect(game_surface, (255,255,255), ((tela_largura/2)-300,10,self.tamanho_barra_vida,10), 2)
 
     def update(self,surface,tela_largura,tela_altura,vel,width,height):

@@ -1,9 +1,6 @@
 from random import randint
 import pygame
 
-
-import pygame
-
 class Explosao(pygame.sprite.Sprite):
     def __init__(self) :
         super().__init__()
