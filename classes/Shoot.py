@@ -11,6 +11,7 @@ class Shoot(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (pos_x,pos_y))
         self.vel = velocidade
         self.dano = dano
+        self.qtd = 2
         self.particles = []
         self.explosions = []
     
@@ -31,11 +32,11 @@ class Shoot(pygame.sprite.Sprite):
     #             self.particles.remove(particle)
 
     def on_collide(self):
-    
         self.kill()  
 
     def update(self):
         # self.drawParticles()
+        
         self.rect.x += self.vel
         if(self.rect.center[0] >= (1024-20)):
             self.kill()

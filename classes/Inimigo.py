@@ -6,6 +6,7 @@ import pygame
 from classes.Heal import Heal
 from classes.explosao import Explosao
 from classes.Shoot import Shoot
+from classes.Velocidade import Velocidade
 
 IMG_HEAL = pygame.image.load(os.path.join("assets","buffs","heal.png"))
 class Inimigo(pygame.sprite.Sprite):
@@ -24,9 +25,12 @@ class Inimigo(pygame.sprite.Sprite):
         self.particles = []
 
     def emit_buff(self):
-        # random_numb = randint(0,20)
-        # if random_numb > 15 :
-        return Heal(self.rect.center[0],self.rect.center[1])
+        rand = randint(0,1)
+        if rand == 0:
+            return Heal(self.rect.center[0],self.rect.center[1])
+        elif rand == 1:
+            return Velocidade(self.rect.center[0],self.rect.center[1])
+        
 
     def on_colide_bullet(self,dano):
         self.life -= Shoot.dano
@@ -42,5 +46,5 @@ class Inimigo(pygame.sprite.Sprite):
             self.kill()
         seno = math.sin(self.theta)
         self.rect.x -= self.vel_x
-        self.rect.y -= seno*5
+        self.rect.centery = (self.rect.centery) - (seno*5)
         self.theta += 0.1

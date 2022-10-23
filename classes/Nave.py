@@ -13,8 +13,10 @@ class Nave(pygame.sprite.Sprite):
         self.vida_ratio = (self.tamanho_barra_vida/self.vida_maxima)
         self.rect = self.image.get_rect(center = (tela_largura/2,tela_altura/2))
         #poder
+        self.velocidade = 5
         self.bullet_damage = 20
         self.bullet_speed = 10
+        self.bullet_qtd = 3
         self.particles = []
 
     def drawParticles(self):
@@ -31,9 +33,9 @@ class Nave(pygame.sprite.Sprite):
                 if(particle[2] <= 0):
                     self.particles.remove(particle)
 
-    def fire(self):
-        return Shoot(self.rect.center[0],self.rect.center[1],self.bullet_damage,self.bullet_speed)
-    
+    def fire(self,xpos,ypos):
+        return Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed)
+       
     def get_damage(self,quantidade):
         if(self.vida_atual >= quantidade):
             self.vida_atual -= quantidade
@@ -51,21 +53,21 @@ class Nave(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_LEFT]: # We can check if a key is pressed like this
             if(self.rect.center[0] >= 0):
-                self.rect.center = pygame.Vector2(self.rect.center[0]-vel,self.rect.center[1])
+                self.rect.center = pygame.Vector2(self.rect.center[0]-self.velocidade,self.rect.center[1])
             else:
                 self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1])
         if keys[pygame.K_RIGHT]:
             if self.rect.center[0] <= (tela_largura)-width:
-                self.rect.center = pygame.Vector2(self.rect.center[0]+vel,self.rect.center[1])
+                self.rect.center = pygame.Vector2(self.rect.center[0]+self.velocidade,self.rect.center[1])
             else: 
                 self.rect.center = pygame.Vector2((tela_largura)-width,self.rect.center[1])
         if keys[pygame.K_UP]:
             if self.rect.center[1] >= 0:
-                self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1]-vel)
+                self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1]-self.velocidade)
             else:
                 self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1])
         if keys[pygame.K_DOWN]:
             if self.rect.center[1] <= (tela_altura)-height:
-                self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1]+vel)
+                self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1]+self.velocidade)
             else:
                 self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1])

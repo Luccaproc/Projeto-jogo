@@ -20,7 +20,7 @@ from classes.Shoot import Shoot
         
 pygame.init()
 
-fps = 30
+fps = 60
 tela = None
 tela_largura,tela_altura = 1024,512
 jogando = True
@@ -54,10 +54,21 @@ while jogando:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             jogando = False
-        if event.type == pygame.KEYUP:
+        keystate = pygame.key.get_pressed()
+
+        # if event.type == pygame.KEYUP:
             # nave.get_damage(50) #testando função de dano
-            if event.key == pygame.K_SPACE:
-                fire_group.add(nave.fire())
+        if keystate[pygame.K_SPACE]:
+            if nave.bullet_qtd == 1:
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.center[1]))
+            if nave.bullet_qtd == 2:
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.top))
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.bottom))
+            if nave.bullet_qtd == 3:
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.top))
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.center[1]))
+                fire_group.add(nave.fire(nave.rect.center[0],nave.rect.bottom))
+
     if(pygame.sprite.spritecollideany(nave,inimigo_spawn.inimigo_group) != None):
         nave.get_damage(50)
         pygame.sprite.spritecollide(nave,inimigo_spawn.inimigo_group,True)
@@ -68,7 +79,9 @@ while jogando:
         for inimigo in inimigo_hit:
             inimigo.life -= shoot.dano
             if(inimigo.life <= 0):
-                buff_group.add(inimigo.emit_buff())
+                rand = randint(0,100)
+                if rand < 100:
+                    buff_group.add(inimigo.emit_buff())
                 explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
             shoot.kill()
     
@@ -76,8 +89,12 @@ while jogando:
         get_buff = pygame.sprite.spritecollide(buff,nave_group,False)
         for nave in get_buff:
             if(nave.vida_atual < nave.vida_maxima):
-                nave.vida_atual += buff.cura
-                buff.collide()
+                if buff.tipe == 0:
+                    nave.vida_atual += buff.cura
+                    buff.collide()
+                elif buff.tipe == 1:
+                    nave.velocidade += buff.velocidade
+                    buff.collide()
     
     game.fill((70,70,70))
     
@@ -91,7 +108,7 @@ while jogando:
     buff_group.update()
     inimigo_spawn.update(tela_largura,tela_altura)
     nave_group.update(game,tela_largura,tela_altura,vel,width,height)
-
+    vel += 0.01
     pygame.display.flip()
     relogio.tick(fps)
 pygame.quit()
