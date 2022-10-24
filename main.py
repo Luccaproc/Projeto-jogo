@@ -17,6 +17,7 @@ from classes.Inimigo import Inimigo
 from classes.InimigoSpaw import InimigoSpaw
 from classes.Nave import Nave
 from classes.Shoot import Shoot
+from classes.player import Player
         
 pygame.init()
 
@@ -34,12 +35,16 @@ pygame.display.set_caption('Nave teste')
 
 #Obejetos do jogo
 nave = Nave(tela_largura,tela_altura) 
+jogador = Player()
 explosao = Explosao()
 
 inimigo_spawn = InimigoSpaw()
 display_group = pygame.sprite.Group()
 
 explode_group = pygame.sprite.Group()
+
+player_group = pygame.sprite.Group()
+player_group.add(jogador)
 
 nave_group = pygame.sprite.Group()
 nave_group.add(nave)
@@ -102,8 +107,10 @@ while jogando:
     fire_group.draw(game)
     nave_group.draw(game)
     buff_group.draw(game)
+    player_group.draw(game)
 
     explosao.update()
+    player_group.update()
     fire_group.update()
     buff_group.update()
     inimigo_spawn.update(tela_largura,tela_altura)
