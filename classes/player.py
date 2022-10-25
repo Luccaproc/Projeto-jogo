@@ -2,9 +2,9 @@ import os
 import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self,player_image):
         super().__init__()
-        self.image = pygame.image.load(os.path.join("assets","player","persona1.png"))
+        self.image = pygame.image.load(player_image)
         self.player_img = pygame.image.load(os.path.join("assets","player","cabine.png"))
         self.mask = pygame.mask.from_surface(self.image)
         self.image = pygame.transform.scale(self.image, (200,130))

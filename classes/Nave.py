@@ -4,7 +4,7 @@ import pygame
 from classes.Shoot import Shoot
 
 class Nave(pygame.sprite.Sprite):
-    def __init__(self,tela_largura,tela_altura):
+    def __init__(self,tela_largura,tela_altura,velocidade,power):
         super().__init__()
         self.image = pygame.Surface((50,25))
         self.image.fill((255,255,255))
@@ -14,10 +14,10 @@ class Nave(pygame.sprite.Sprite):
         self.vida_ratio = (self.tamanho_barra_vida/self.vida_maxima)
         self.rect = self.image.get_rect(center = (tela_largura/2,tela_altura/2))
         #poder
-        self.velocidade = 5
-        self.bullet_damage = 20
+        self.velocidade = velocidade
+        self.bullet_damage = power
         self.bullet_speed = 10
-        self.bullet_qtd = 3
+        self.bullet_qtd = 1
         self.particles = []
 
     def drawParticles(self):
@@ -47,7 +47,7 @@ class Nave(pygame.sprite.Sprite):
         pygame.draw.rect(game_surface, (255,0,0), ((tela_largura/2)-300,10,(self.vida_atual*self.vida_ratio),10))
         pygame.draw.rect(game_surface, (255,255,255), ((tela_largura/2)-300,10,self.tamanho_barra_vida,10), 2)
 
-    def update(self,surface,tela_largura,tela_altura,vel,width,height):
+    def update(self,surface,tela_largura,tela_altura,width,height):
         self.barra_vida(surface,tela_largura)
         self.drawParticles()
         # self.rect.center = pygame.mouse.get_pos()

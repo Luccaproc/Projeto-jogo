@@ -13,7 +13,7 @@ class Inimigo(pygame.sprite.Sprite):
     def __init__(self,pos_x,pos_y):
         super().__init__()
         self.theta = 0
-        self.life = 50
+        self.life = 100
         self.image = pygame.Surface((50,25))
         self.image.fill((255,255,255))
         self.rect = self.image.get_rect()
