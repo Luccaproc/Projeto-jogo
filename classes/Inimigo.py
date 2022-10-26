@@ -19,7 +19,7 @@ class Inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = randint(int(pos_y-(pos_y*1)),pos_y-50)
         self.rect.x = pos_x
-        self.vel_x = 5
+        self.vel_x = 2
         self.metade = False
         self.vel_y = 0
         self.particles = []

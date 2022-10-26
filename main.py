@@ -51,7 +51,21 @@ PERSONAGENS = [
         'nome': 'JOTA',
         'velocidade': 15,
         'power': 15,
-        'player_img': os.path.join("assets","player","cabine.png")
+        'player_img': os.path.join("assets","player","persona1.png")
+    },
+    {
+        'id':3,
+        'nome': 'ALITA',
+        'velocidade': 15,
+        'power': 15,
+        'player_img': os.path.join("assets","player","persona1.png")
+    },
+    {
+        'id':3,
+        'nome': 'MART',
+        'velocidade': 15,
+        'power': 15,
+        'player_img': os.path.join("assets","player","persona1.png")
     }
 ]
 
@@ -131,7 +145,7 @@ def menu():
         
         button_1 = pygame.Rect(50,(tela_altura)-155,100,40)
         button_2 = pygame.Rect(50,(tela_altura)-100,100,40)
-
+        
         if button_1.collidepoint((mx,my)):
             button_1.inflate_ip(5,5)
             if click :
@@ -157,9 +171,12 @@ def menu():
                 if event.button == 1:
                     click = True
 
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    click = False
+
             if keystate[pygame.K_ESCAPE]:
                 menu()
-                
         game.fill((0,30,50))
         my_font_large.render(game,"MENU PRINCIPAL",(20,20))
 
@@ -191,21 +208,31 @@ def person_select():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    click = False
 
         game.fill((0,30,50))
-        my_font_large.render(game,"ESCOLHA DE PERSONAGEM",(20,20))
+        my_font_large.render(game,"ESCOLHA DE PERSONAGEM",((tela_largura/2)-80,50))
         mx, my = pygame.mouse.get_pos()
 
         for person in range(len(PERSONAGENS)):
-            persona = pygame.Rect(50+(200*person),tela_altura-400,190,130)
+            spacing_card = 45
+            spacing = 45
+            card_width = 200
+            card_heigth = 200
+            card = pygame.Rect(spacing_card*(person+1)+(200*person),tela_altura-400,card_width,card_heigth)
+            persona = pygame.Rect((spacing*(person+1)+(200*person)+5),tela_altura-395,card_width-10,130)
+            pygame.draw.rect(game,(100,100,255),card,2)
             pygame.draw.rect(game,(100,100,255),persona,2)
             img_person = pygame.image.load(PERSONAGENS[person]['player_img'])
-            pygame.display.get_surface().blit(img_person,(50+(200*person),tela_altura-400))
-            my_font_large.render(game,"NOME :" + PERSONAGENS[person]['nome'],(55+(200*person),tela_altura-260))
-            my_font_large.render(game,"POWER :" + str(PERSONAGENS[person]['velocidade']),(55+(200*person),tela_altura-240))
-            my_font_large.render(game,"VELOCIDADE :" + str(PERSONAGENS[person]['velocidade']),(55+(200*person),tela_altura-220))
-            if persona.collidepoint((mx,my)):
-                persona.inflate_ip(10,10)
+            pygame.display.get_surface().blit(img_person,((spacing*(person+1)+(200*person)+5),tela_altura-395))
+            my_font_large.render(game,"NOME :" + PERSONAGENS[person]['nome'],((spacing*(person+1)+(200*person)+5),tela_altura-260))
+            my_font_large.render(game,"POWER :" + str(PERSONAGENS[person]['velocidade']),((spacing*(person+1)+(200*person)+5),tela_altura-240))
+            my_font_large.render(game,"VELOCIDADE :" + str(PERSONAGENS[person]['velocidade']),((spacing*(person+1)+(200*person)+5),tela_altura-220))
+            if card.collidepoint((mx,my)):
+                card.move_ip(10,10)
+                card.inflate_ip(5,5)
                 if click :
                     jogador = Player(PERSONAGENS[person]['player_img'])
                     player_group.add(jogador)
@@ -248,7 +275,14 @@ def jogo():
                         fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.top))
                         fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
                         fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.bottom))
-
+            
+            if keystate[pygame.K_r]:
+                if len(nave_group) > 0:
+                    if nave_group.sprites()[0].especial_qtd > 0:
+                        fire_group.add(nave_group.sprites()[0].especial(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
+                        nave_group.sprites()[0].especial_qtd -= 1
+                    else:
+                        print('esgotou')
         for enemy in inimigo_spawn.inimigo_group:
             nave_hit = pygame.sprite.spritecollide(enemy,nave_group,False)
             for nave in nave_hit:
@@ -264,6 +298,8 @@ def jogo():
                 shoot.kill()
                 if(inimigo.life <= 0):
                     rand = randint(0,100)
+                    if nave_group.sprites()[0].especial_qtd < nave_group.sprites()[0].especial_max : 
+                        nave_group.sprites()[0].especial_qtd += 1
                     if rand < 10:
                         buff_group.add(inimigo.emit_buff())
                     explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])

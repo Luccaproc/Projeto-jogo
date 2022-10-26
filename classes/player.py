@@ -7,9 +7,9 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(player_image)
         self.player_img = pygame.image.load(os.path.join("assets","player","cabine.png"))
         self.mask = pygame.mask.from_surface(self.image)
-        self.image = pygame.transform.scale(self.image, (200,130))
+        self.image = pygame.transform.scale(self.image, (160,96))
         self.persona = pygame.mask.from_surface(self.player_img)
-        self.person = pygame.transform.scale(self.player_img, (200,130))
+        self.person = pygame.transform.scale(self.player_img, (160,96))
 
         self.rect = self.image.get_rect()
         self.rect.x = 10

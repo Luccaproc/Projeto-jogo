@@ -2,6 +2,7 @@ from random import randint
 import os
 import pygame
 from classes.Shoot import Shoot
+from classes.especial import Especial
 
 class Nave(pygame.sprite.Sprite):
     def __init__(self,tela_largura,tela_altura,velocidade,power):
@@ -10,9 +11,14 @@ class Nave(pygame.sprite.Sprite):
         self.image.fill((255,255,255))
         self.vida_atual = 200
         self.vida_maxima = 800
-        self.tamanho_barra_vida = 400
+        self.tamanho_barra_vida = 100
         self.vida_ratio = (self.tamanho_barra_vida/self.vida_maxima)
         self.rect = self.image.get_rect(center = (tela_largura/2,tela_altura/2))
+        
+        self.especial_qtd = 30
+        self.tamanho_barra_especial = 100
+        self.especial_max = 50
+        self.especial_ratio = (self.tamanho_barra_especial/self.especial_max)
         #poder
         self.velocidade = velocidade
         self.bullet_damage = power
@@ -37,6 +43,9 @@ class Nave(pygame.sprite.Sprite):
     def fire(self,xpos,ypos):
         return Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed)
        
+    def especial(self,xpos,ypos):
+        return Especial(xpos,ypos,20,5)
+    
     def get_damage(self,quantidade):
         if(self.vida_atual >= quantidade):
             self.vida_atual -= quantidade
@@ -44,11 +53,16 @@ class Nave(pygame.sprite.Sprite):
             self.kill()
 
     def barra_vida(self,game_surface,tela_largura):
-        pygame.draw.rect(game_surface, (255,0,0), ((tela_largura/2)-300,10,(self.vida_atual*self.vida_ratio),10))
-        pygame.draw.rect(game_surface, (255,255,255), ((tela_largura/2)-300,10,self.tamanho_barra_vida,10), 2)
+        pygame.draw.rect(game_surface, (255,0,0), (180,10,(self.vida_atual*self.vida_ratio),10))
+        pygame.draw.rect(game_surface, (255,255,255), (180,10,self.tamanho_barra_vida,10), 1)
+
+    def barra_especial(self,game_surface,tela_largura):
+        pygame.draw.rect(game_surface, (0,70,200), (180,25,(self.especial_qtd*self.especial_ratio),10))
+        pygame.draw.rect(game_surface, (255,255,255), (180,25,self.tamanho_barra_especial,10), 1)
 
     def update(self,surface,tela_largura,tela_altura,width,height):
         self.barra_vida(surface,tela_largura)
+        self.barra_especial(surface,tela_largura)
         self.drawParticles()
         # self.rect.center = pygame.mouse.get_pos()
         keys = pygame.key.get_pressed() 
