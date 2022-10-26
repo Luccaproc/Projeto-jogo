@@ -4,6 +4,7 @@ from random import randint
 import pygame
 
 from classes.Heal import Heal
+from classes.Power import Power
 from classes.explosao import Explosao
 from classes.Shoot import Shoot
 from classes.Velocidade import Velocidade
@@ -25,11 +26,13 @@ class Inimigo(pygame.sprite.Sprite):
         self.particles = []
 
     def emit_buff(self):
-        rand = randint(0,1)
+        rand = randint(0,2)
         if rand == 0:
             return Heal(self.rect.center[0],self.rect.center[1])
         elif rand == 1:
             return Velocidade(self.rect.center[0],self.rect.center[1])
+        elif rand == 2:
+            return Power(self.rect.center[0],self.rect.center[1])
         
 
     def on_colide_bullet(self,dano):

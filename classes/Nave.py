@@ -1,3 +1,4 @@
+import math
 from random import randint
 import os
 import pygame
@@ -23,8 +24,10 @@ class Nave(pygame.sprite.Sprite):
         self.velocidade = velocidade
         self.bullet_damage = power
         self.bullet_speed = 10
-        self.bullet_qtd = 1
+        self.bullet_pow = 3
         self.particles = []
+        self.radius = 1
+        self.bullets = []
 
     def drawParticles(self):
         if(self.alive()):
@@ -41,10 +44,37 @@ class Nave(pygame.sprite.Sprite):
                     self.particles.remove(particle)
 
     def fire(self,xpos,ypos):
-        return Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed,[1,0],(255,255,255))
-       
+        anguloStep = 45/self.bullet_pow
+        anguloAtual = 90
+        if(self.bullet_pow == 1):
+            anguloAtual = 90 
+        elif(self.bullet_pow == 2):
+            anguloAtual = 75
+        elif(self.bullet_pow == 3):
+            anguloAtual = 69
+        elif(self.bullet_pow == 4):
+            anguloAtual = 58
+        else:
+            anguloAtual = 45
+        # anguloAtual -= (15*(self.bullet_pow-1))
+        # if(anguloAtual < 45):
+        #     anguloAtual = 45
+        for bullet in range(self.bullet_pow):
+            sen = math.sin((anguloAtual  * math.pi)/180)*self.radius
+            cos = math.cos((anguloAtual * math.pi)/180)*self.radius
+
+            posicaoXbala = xpos + sen
+            posicaoYbala = ypos + cos
+
+            vetorBala = pygame.Vector2(posicaoXbala,posicaoYbala)
+            balaDirection = pygame.Vector2(vetorBala-self.rect.center).normalize()
+
+            anguloAtual += anguloStep
+            self.bullets.append(Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed,balaDirection,(255,255,255)))
+        return self.bullets
+            
     def especial(self):
-        especial = Especial(self.rect.centerx,self.rect.centery,20,5,20)
+        especial = Especial(self.rect.centerx,self.rect.centery,20,2,20)
         especial.spawnBullets()
         return especial.bullets
     

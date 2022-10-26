@@ -268,15 +268,17 @@ def jogo():
                 # nave.get_damage(50) #testando função de dano
             if keystate[pygame.K_SPACE]:
                 if len(nave_group) > 0:
-                    if nave_group.sprites()[0].bullet_qtd == 1:
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
-                    if nave_group.sprites()[0].bullet_qtd == 2:
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.top))
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.bottom))
-                    if nave_group.sprites()[0].bullet_qtd == 3:
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.top))
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
-                        fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.bottom))
+                    # for fire in range(nave_group.sprites()[0].bullet_pow):
+                    fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],(nave_group.sprites()[0].rect.center[1])))
+                    # if nave_group.sprites()[0].bullet_pow == 1:
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
+                    # if nave_group.sprites()[0].bullet_pow == 2:
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.top))
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.bottom))
+                    # if nave_group.sprites()[0].bullet_pow == 3:
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.top))
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
+                    #     fire_group.add(nave_group.sprites()[0].fire(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.bottom))
             
             if keystate[pygame.K_r]:
                 if len(nave_group) > 0:
@@ -329,6 +331,9 @@ def jogo():
                         buff.collide()
                     elif buff.tipe == 1:
                         nave.velocidade += buff.velocidade
+                        buff.collide()
+                    elif buff.tipe == 2:
+                        nave.bullet_pow += buff.power
                         buff.collide()
         
         game.fill((70,70,70))
