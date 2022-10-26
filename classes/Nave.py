@@ -41,10 +41,12 @@ class Nave(pygame.sprite.Sprite):
                     self.particles.remove(particle)
 
     def fire(self,xpos,ypos):
-        return Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed)
+        return Shoot(xpos,ypos,self.bullet_damage,self.bullet_speed,[1,0],(255,255,255))
        
-    def especial(self,xpos,ypos):
-        return Especial(xpos,ypos,20,5)
+    def especial(self):
+        especial = Especial(self.rect.centerx,self.rect.centery,20,5,20)
+        especial.spawnBullets()
+        return especial.bullets
     
     def get_damage(self,quantidade):
         if(self.vida_atual >= quantidade):
@@ -86,3 +88,6 @@ class Nave(pygame.sprite.Sprite):
                 self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1]+self.velocidade)
             else:
                 self.rect.center = pygame.Vector2(self.rect.center[0],self.rect.center[1])
+        
+                    
+                    

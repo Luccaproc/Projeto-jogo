@@ -3,6 +3,7 @@ from ast import For
 from pydoc import cli
 import sys
 import os
+from classes.especial import Especial
 
 from classes.explosao import Explosao
 path = os.path.dirname(os.path.abspath(__file__))
@@ -70,6 +71,7 @@ PERSONAGENS = [
 ]
 
 explosao = Explosao()
+
 vel = 5
 
 inimigo_spawn = InimigoSpaw()
@@ -79,7 +81,7 @@ player_group = pygame.sprite.Group()
 
 
 nave_group = pygame.sprite.GroupSingle()
-
+especial_group = pygame.sprite.Group()
 fire_group = pygame.sprite.Group()
 buff_group = pygame.sprite.Group()
 
@@ -278,11 +280,14 @@ def jogo():
             
             if keystate[pygame.K_r]:
                 if len(nave_group) > 0:
-                    if nave_group.sprites()[0].especial_qtd > 0:
-                        fire_group.add(nave_group.sprites()[0].especial(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
-                        nave_group.sprites()[0].especial_qtd -= 1
-                    else:
-                        print('esgotou')
+                    especial_group.add(nave_group.sprites()[0].especial())
+                    # fire_group.add(nave_group.sprites()[0].especial())
+                    # nave_group.sprites()[0].especial().spawnBullets()
+                    # if nave_group.sprites()[0].especial_qtd > 0:
+                    # fire_group.add(nave_group.sprites()[0].especial(nave_group.sprites()[0].rect.center[0],nave_group.sprites()[0].rect.center[1]))
+                    # nave_group.sprites()[0].especial_qtd -= 1
+                    # else:
+                    #     print('esgotou')
         for enemy in inimigo_spawn.inimigo_group:
             nave_hit = pygame.sprite.spritecollide(enemy,nave_group,False)
             for nave in nave_hit:
@@ -290,8 +295,19 @@ def jogo():
                 enemy.kill()
 
         for shoot in fire_group:
-            # drawParticles(shoot)
-            pygame.sprite.groupcollide(fire_group,inimigo_spawn.inimigo_group,True,False)
+            inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
+            for inimigo in inimigo_hit:
+                inimigo.life -= shoot.dano
+                shoot.kill()
+                if(inimigo.life <= 0):
+                    rand = randint(0,100)
+                    if nave_group.sprites()[0].especial_qtd < nave_group.sprites()[0].especial_max : 
+                        nave_group.sprites()[0].especial_qtd += 1
+                    if rand < 10:
+                        buff_group.add(inimigo.emit_buff())
+                    explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
+
+        for shoot in especial_group:
             inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
             for inimigo in inimigo_hit:
                 inimigo.life -= shoot.dano
@@ -322,7 +338,9 @@ def jogo():
         nave_group.draw(game)
         buff_group.draw(game)
         player_group.draw(game)
+        especial_group.draw(game)
 
+        especial_group.update()
         explosao.update()
         player_group.update()
         fire_group.update()

@@ -4,17 +4,17 @@ import pygame
 clock = pygame.time.Clock()
 class Shoot(pygame.sprite.Sprite):
 
-    def __init__(self,pos_x,pos_y,dano,velocidade):
+    def __init__(self,pos_x,pos_y,dano,velocidade,direction, cor):
         super().__init__()
-        self.image = pygame.Surface((10,3))
-        self.image.fill((30,30,230))
+        self.image = pygame.Surface((5,5))
+        self.image.fill(cor)
         self.rect = self.image.get_rect(center = (pos_x,pos_y))
         self.vel = velocidade
         self.dano = dano
         self.qtd = 2
         self.particles = []
         self.explosions = []
-    
+        self.direction = direction
     # def drawParticles(self):
     #     self.particles.append([[self.rect.x,self.rect.center[1]],[randint(0,20)/10-1,-2],randint(2,15)])
     #     for particle in self.particles:
@@ -36,7 +36,11 @@ class Shoot(pygame.sprite.Sprite):
 
     def update(self):
         # self.drawParticles()
-        
-        self.rect.x += self.vel
-        if(self.rect.center[0] >= (1024-20)):
+        self.rect.centerx += (self.direction[0]*self.vel)
+        self.rect.centery += (self.direction[1]*self.vel)
+
+        if(self.rect.center[0] >= (1024-20) or self.rect.center[0] < 0):
+            self.kill()
+
+        if(self.rect.center[1] >= (512-20) or self.rect.center[1] < 0):
             self.kill()
