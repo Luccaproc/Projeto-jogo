@@ -31,15 +31,16 @@ class Especial(pygame.sprite.Sprite):
             vetorBala = pygame.Vector2(posicaoXbala,posicaoYbala)
             balaDirection = pygame.Vector2(vetorBala-self.rect.center).normalize() * self.vel
 
-            bala = Shoot(self.rect.centerx,self.rect.centery,20,5,balaDirection,(255,255,32))
+            bala = Shoot(self.rect.centerx,self.rect.centery,20,5,balaDirection,0,(255,255,32))
 
             angulo += anguloStep
             self.bullets.append(bala)
 
     def emitir(self):
-        for bullet in self.bullets:
-            bullet.update()
+        # for bullet in self.bullets:
+        #     bullet.update()
     # def rotate_bullet(self):
+        pass
 
     def update(self) -> None:
         self.emitir()
