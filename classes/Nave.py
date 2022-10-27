@@ -52,7 +52,12 @@ class Nave(pygame.sprite.Sprite):
     def especial(self):
         especial = Especial(self.rect.centerx,self.rect.centery,20,2,20)
         especial.spawnBullets()
-        return especial.bullets
+        return especial
+
+    def especial2(self,theta):
+        especial = Especial(self.rect.centerx,self.rect.centery,20,2,10)
+        especial.spawnBullets2(theta)
+        return especial
     
     def get_damage(self,quantidade):
         if(self.vida_atual >= quantidade):

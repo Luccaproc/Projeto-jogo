@@ -13,7 +13,7 @@ class Especial(pygame.sprite.Sprite):
         self.dano = dano
         self.qtd = qtd
         self.bullets = []
-        self.theta = 0
+        self.theta = 0.1
         self.spaw_timer = 50
         self.radius = 1
 
@@ -36,6 +36,29 @@ class Especial(pygame.sprite.Sprite):
             angulo += anguloStep
             self.bullets.append(bala)
 
+    def spawnBullets2(self,theta):
+        anguloStep = 360/self.qtd
+        angulo = 0
+        
+        for bullet in range(self.qtd):
+            sen = math.sin((angulo * math.pi)/180)*self.radius
+            cos = math.cos((angulo * math.pi)/180)*self.radius
+
+            senoTh = math.sin(theta)
+            cosTh = math.cos(theta)
+
+            posicaoXbala = self.rect.centerx + sen 
+            posicaoYbala = self.rect.centery + cos
+
+            vetorBala = pygame.Vector2(posicaoXbala,posicaoYbala)
+            balaDirection = pygame.Vector2(vetorBala-self.rect.center).normalize().rotate_rad(theta*20) * self.vel
+
+            bala = Shoot(self.rect.centerx,self.rect.centery,20,5,balaDirection,0,(255,255,32))
+
+            angulo += anguloStep
+            self.bullets.append(bala)
+            
+
     def emitir(self):
         # for bullet in self.bullets:
         #     bullet.update()
@@ -43,7 +66,7 @@ class Especial(pygame.sprite.Sprite):
         pass
 
     def update(self) -> None:
-        self.emitir()
+        # self.emitir()
         if(self.rect.centerx > (1024-20) or self.rect.centerx < 0):
             print('morreu')
             self.kill()

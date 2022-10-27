@@ -79,6 +79,7 @@ display_group = pygame.sprite.Group()
 explode_group = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 
+theta = 0
 
 nave_group = pygame.sprite.GroupSingle()
 especial_group = pygame.sprite.Group()
@@ -247,9 +248,11 @@ def person_select():
 
         
 def jogo():
+    theta = 0
     jogando = True
     pygame.mouse.set_visible(0)
     while jogando:
+        theta += 0.5
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 jogando = False
@@ -282,7 +285,12 @@ def jogo():
             
             if keystate[pygame.K_r]:
                 if len(nave_group) > 0:
-                    especial_group.add(nave_group.sprites()[0].especial())
+                    especial_group.add(nave_group.sprites()[0].especial().bullets)
+
+            if keystate[pygame.K_e]:
+                if len(nave_group) > 0:
+                    especial_group.add(nave_group.sprites()[0].especial2(theta).bullets)
+                    
                     # fire_group.add(nave_group.sprites()[0].especial())
                     # nave_group.sprites()[0].especial().spawnBullets()
                     # if nave_group.sprites()[0].especial_qtd > 0:
@@ -353,6 +361,7 @@ def jogo():
         inimigo_spawn.update(tela_largura,tela_altura)
         nave_group.update(game,tela_largura,tela_altura,width,height)
         pygame.display.flip()
+        
         relogio.tick(fps)
 menu()
 pygame.quit()
