@@ -3,6 +3,8 @@ from ast import For
 from pydoc import cli
 import sys
 import os
+from classes.DisplayPonter import DisplayPointer
+from classes.Font import Font
 from classes.especial import Especial
 
 from classes.explosao import Explosao
@@ -84,57 +86,14 @@ theta = 0
 nave_group = pygame.sprite.GroupSingle()
 especial_group = pygame.sprite.Group()
 fire_group = pygame.sprite.Group()
+fire_enemy_group = pygame.sprite.Group()
+especial_enemy_group = pygame.sprite.Group()
 buff_group = pygame.sprite.Group()
 
 relogio = pygame.time.Clock()
 particles = []
 personas_obj = []
 
-def clip(surface,x,y,x_size,y_size):
-    handle_surface = surface.copy()
-    clipR = pygame.Rect(x,y,x_size,y_size)
-    handle_surface.set_clip(clipR)
-    image = surface.subsurface(handle_surface.get_clip())
-    return image.copy()
-
-class Font():
-    def __init__(self,path):
-        self.spacing = 1
-        self.character_order = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','.','-',',',':','+','\'','!','?','0','1','2','3','4','5','6','7','8','9','(',')','/','_','=','\\','[',']','*','"','<','>',';']
-        font_img = pygame.image.load(path).convert()
-        current_char_width = 0
-        x = 0
-        self.characters = {}
-        char_count = 0
-        for x in range(font_img.get_width()):
-            c = font_img.get_at((x,0))
-            if c[0] == 127:
-                char_img = clip(font_img,x - current_char_width,0,current_char_width,font_img.get_height())
-                char_img = troca_paleta(char_img,(255,0,0),(255,255,255),char_img)
-                char_img.set_colorkey((0, 0, 0))
-                self.characters[self.character_order[char_count]] = char_img.copy()
-                char_count += 1
-                current_char_width = 0
-            else:
-                current_char_width += 1
-        self.space_width = self.characters['A'].get_width()
-
-    def render(self,surf,text,loc):
-        x_offset = 0
-        for char in text :
-            if char != ' ':
-                surf.blit(self.characters[char],(loc[0]+ x_offset,loc[1]))
-                x_offset += self.characters[char].get_width() + self.spacing
-            else:
-                x_offset += self.space_width + self.spacing
-
-def troca_paleta(surface,old_c,new_c,obj):
-    img_copy = pygame.Surface(obj.get_size())
-    img_copy.fill(new_c)
-    surface.set_colorkey(old_c)
-    img_copy.blit(surface,(0,0))
-    return img_copy
-    
 my_font = Font(os.path.join("assets","fonts","small_font.png"))
 my_font_large = Font(os.path.join("assets","fonts","large_font.png"))
 
@@ -250,9 +209,13 @@ def person_select():
 def jogo():
     theta = 0
     jogando = True
+    pontos = 0
+    displayPoint = DisplayPointer(tela_largura/2,0)
+    display_group.add(displayPoint)
     pygame.mouse.set_visible(0)
     while jogando:
         theta += 0.5
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 jogando = False
@@ -269,6 +232,7 @@ def jogo():
                 menu()
             # if event.type == pygame.KEYUP:
                 # nave.get_damage(50) #testando função de dano
+
             if keystate[pygame.K_SPACE]:
                 if len(nave_group) > 0:
                     # for fire in range(nave_group.sprites()[0].bullet_pow):
@@ -285,12 +249,14 @@ def jogo():
             
             if keystate[pygame.K_r]:
                 if len(nave_group) > 0:
-                    especial_group.add(nave_group.sprites()[0].especial().bullets)
-
+                    if nave_group.sprites()[0].especial_qtd > 0:
+                        especial_group.add(nave_group.sprites()[0].especial().bullets)
+                        nave_group.sprites()[0].especial_qtd -= 1
             if keystate[pygame.K_e]:
                 if len(nave_group) > 0:
-                    especial_group.add(nave_group.sprites()[0].especial2(theta).bullets)
-                    
+                    if nave_group.sprites()[0].especial_qtd > 0:
+                        especial_group.add(nave_group.sprites()[0].especial2(theta).bullets)
+                        nave_group.sprites()[0].especial_qtd -= 1
                     # fire_group.add(nave_group.sprites()[0].especial())
                     # nave_group.sprites()[0].especial().spawnBullets()
                     # if nave_group.sprites()[0].especial_qtd > 0:
@@ -299,19 +265,30 @@ def jogo():
                     # else:
                     #     print('esgotou')
         for enemy in inimigo_spawn.inimigo_group:
+            fire_enemy_group.add(enemy.shoots)
+            if enemy.tipe == 5 and enemy.time_cooldown_especial <= 0:
+                especial_enemy_group.add(enemy.especial().bullets)
+
             nave_hit = pygame.sprite.spritecollide(enemy,nave_group,False)
             for nave in nave_hit:
+                inimigo_spawn.inimigo_group.remove(enemy)
                 nave.get_damage(50)
                 enemy.kill()
 
         for shoot in fire_group:
             inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
             for inimigo in inimigo_hit:
-                inimigo.life -= shoot.dano
+                fire_group.remove(shoot)
                 shoot.kill()
+                inimigo.life -= shoot.dano
                 if(inimigo.life <= 0):
+                    pontos += inimigo.pontos
+                    display_group.remove(displayPoint)
+                    displayPoint = DisplayPointer(tela_largura/2,0)
+                    display_group.add(displayPoint)
+                    displayPoint.set_point(pontos)
                     rand = randint(0,100)
-                    if nave_group.sprites()[0].especial_qtd < nave_group.sprites()[0].especial_max : 
+                    if nave_group.sprites()[0].especial_qtd < nave_group.sprites()[0].especial_max: 
                         nave_group.sprites()[0].especial_qtd += 1
                     if rand < 10:
                         buff_group.add(inimigo.emit_buff())
@@ -320,15 +297,36 @@ def jogo():
         for shoot in especial_group:
             inimigo_hit = pygame.sprite.spritecollide(shoot,inimigo_spawn.inimigo_group,False)
             for inimigo in inimigo_hit:
-                inimigo.life -= shoot.dano
+                especial_group.remove(shoot)
                 shoot.kill()
+                inimigo.life -= shoot.dano
                 if(inimigo.life <= 0):
+                    pontos += inimigo.pontos
+                    display_group.remove(displayPoint)
+                    displayPoint = DisplayPointer(tela_largura/2,0)
+                    display_group.add(displayPoint)
+                    displayPoint.set_point(pontos)
                     rand = randint(0,100)
                     if nave_group.sprites()[0].especial_qtd < nave_group.sprites()[0].especial_max : 
                         nave_group.sprites()[0].especial_qtd += 1
                     if rand < 10:
                         buff_group.add(inimigo.emit_buff())
                     explosao.adiciona_particulas(inimigo.rect.center[0],inimigo.rect.center[1])
+
+        for shoot in especial_enemy_group:
+            nave_hit = pygame.sprite.spritecollide(shoot,nave_group,False)
+            for nave in nave_hit:
+                especial_enemy_group.remove(shoot)
+                shoot.kill()
+                nave.get_damage(shoot.dano)
+
+        for shoot in fire_enemy_group:
+            nave_hit = pygame.sprite.spritecollide(shoot,nave_group,False)
+            for nave in nave_hit:
+                fire_enemy_group.remove(shoot)
+                nave.get_damage(shoot.dano)
+                shoot.kill()
+                
         
         for buff in buff_group:
             get_buff = pygame.sprite.spritecollide(buff,nave_group,False)
@@ -352,8 +350,13 @@ def jogo():
         buff_group.draw(game)
         player_group.draw(game)
         especial_group.draw(game)
-
+        display_group.draw(game)
+        fire_enemy_group.draw(game)
+        especial_enemy_group.draw(game)
+        # display_group.update()
+        fire_enemy_group.update()
         especial_group.update()
+        especial_enemy_group.update()
         explosao.update()
         player_group.update()
         fire_group.update()

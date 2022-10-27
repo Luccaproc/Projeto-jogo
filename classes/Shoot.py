@@ -35,7 +35,7 @@ class Shoot(pygame.sprite.Sprite):
     #             self.particles.remove(particle)
     def fire(self,xpos,ypos):
         anguloStep = 90/(self.qtd+1)
-        anguloAtual = 45 + anguloStep
+        anguloAtual = 45 + math.ceil(anguloStep)
 
         for bullet in range(self.qtd):
             sen = math.sin((anguloAtual  * math.pi)/180)*self.radius
@@ -49,7 +49,7 @@ class Shoot(pygame.sprite.Sprite):
 
             bala = Shoot(xpos,ypos,self.dano,self.vel,balaDirection,0,(255,255,255))
 
-            anguloAtual += anguloStep
+            anguloAtual += math.ceil(anguloStep)
 
             self.bullets.append(bala)
 

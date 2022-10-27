@@ -10,7 +10,7 @@ class Nave(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((50,25))
         self.image.fill((255,255,255))
-        self.vida_atual = 200
+        self.vida_atual = 800
         self.vida_maxima = 800
         self.tamanho_barra_vida = 100
         self.vida_ratio = (self.tamanho_barra_vida/self.vida_maxima)
@@ -60,6 +60,7 @@ class Nave(pygame.sprite.Sprite):
         return especial
     
     def get_damage(self,quantidade):
+        print('colidiu')
         if(self.vida_atual >= quantidade):
             self.vida_atual -= quantidade
         else:
